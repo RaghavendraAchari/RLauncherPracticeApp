@@ -2,6 +2,7 @@ package com.raghav.android.rlauncher;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -32,9 +33,10 @@ public class RLauncherFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rlauncher,container,false);
 
-        mRecyclerView = v.findViewById(R.id.fragment_container);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView =(RecyclerView) v.findViewById(R.id.recycler_view);
 
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        setAdapter();
 
         return v;
     }
@@ -63,13 +65,14 @@ public class RLauncherFragment extends Fragment {
     }
 
 
-    private class ActivityHolder extends RecyclerView.ViewHolder{
+    private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ResolveInfo mResolveInfo;
         private TextView mActivityName;
 
         public ActivityHolder(View itemView){
             super(itemView);
             mActivityName = (TextView)itemView;
+            mActivityName.setOnClickListener(this);
         }
 
         public void bind(ResolveInfo resolveInfo){
@@ -77,6 +80,15 @@ public class RLauncherFragment extends Fragment {
             PackageManager pm = getActivity().getPackageManager();
             String appName = mResolveInfo.loadLabel(pm).toString();
             mActivityName.setText(appName);
+        }
+
+        @Override
+        public void onClick(View v) {
+            ActivityInfo activityInfo = mResolveInfo.activityInfo;
+
+            Intent i =new Intent(Intent.ACTION_MAIN).setClassName(activityInfo.applicationInfo.packageName ,activityInfo.name).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+
         }
     }
 
