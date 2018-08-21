@@ -1,5 +1,6 @@
 package com.raghav.android.rlauncher;
 
+import android.app.WallpaperManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        //WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+
         if(fragment == null){
             fragment = createFragment();
             fragment.setEnterTransition(new Fade());

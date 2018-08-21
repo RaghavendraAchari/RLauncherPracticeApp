@@ -1,10 +1,15 @@
 package com.raghav.android.rlauncher;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -32,10 +38,13 @@ public class RLauncherFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rlauncher,container,false);
+        //WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity());
+
+
 
         mRecyclerView =(RecyclerView) v.findViewById(R.id.recycler_view);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
         setAdapter();
 
         return v;
@@ -68,18 +77,23 @@ public class RLauncherFragment extends Fragment {
     private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ResolveInfo mResolveInfo;
         private TextView mActivityName;
+        private ImageView mIcon;
 
         public ActivityHolder(View itemView){
             super(itemView);
-            mActivityName = (TextView)itemView;
-            mActivityName.setOnClickListener(this);
+            mActivityName = (TextView) itemView.findViewById(R.id.app_name);
+            mIcon = (ImageView)itemView.findViewById(R.id.image_icon);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(ResolveInfo resolveInfo){
             mResolveInfo = resolveInfo;
             PackageManager pm = getActivity().getPackageManager();
             String appName = mResolveInfo.loadLabel(pm).toString();
+            Drawable drawable = mResolveInfo.loadIcon(pm);
+            mIcon.setImageDrawable(drawable);
             mActivityName.setText(appName);
+
         }
 
         @Override
@@ -103,7 +117,7 @@ public class RLauncherFragment extends Fragment {
         @Override
         public ActivityHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            View v = inflater.inflate(android.R.layout.simple_list_item_1,parent,false);
+            View v = inflater.inflate(R.layout.single_lst_item,parent,false);
             return new ActivityHolder(v);
         }
 
